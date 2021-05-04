@@ -34,8 +34,14 @@ groups <- cutree(fit, k=5) # cut tree into 5 clusters
 # draw dendogram with red borders around the 5 clusters
 rect.hclust(fit, k=5, border="red")
 
-clustersConHum <- mydata %>% mutate(groups= groups)
+
+clustersConHum <- ConHum %>% 
+  select(Formulario:Name) %>% 
+  mutate(groups=groups) %>% 
+  mutate(cluster2=mydata$fit.cluster)
+
 save(clustersConHum, file='data_clean/cluster_ConHum.Rdata')
+write.csv(clustersConHum, file='data_clean/cluster_ConHum.csv')
 
 ########################################################################
 ########################################################################s
@@ -73,5 +79,10 @@ groups <- cutree(fit, k=4) # cut tree into 4 clusters
 # draw dendogram with red borders around the 4 clusters
 rect.hclust(fit, k=4, border="red")
 
-clustersFactInf <- mydata2 %>% mutate(groups= groups)
+clustersFactInf <- FactInf %>% 
+  select(Formulario:nom_hum) %>% 
+  mutate(groups=groups) %>% 
+  mutate(cluster2=mydata2$fit.cluster)
+
 save(clustersFactInf, file='data_clean/cluster_FactInf.Rdata')
+write.csv(clustersFactInf, file='data_clean/cluster_FactInf.csv')
