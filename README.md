@@ -1,19 +1,9 @@
 README
 ================
 
-`{r setup, include=FALSE} knitr::opts_chunk$set(echo = TRUE)`
+Costa Rican Wetlands Vulnerability Index
 
+This is the code for paper reference. Originally written by Marcela Alfaro-Córdoba.
 
-# humedales/
-# ├── CITATION
-# ├── code
-# │   └── clean_data.R
-# ├── data_clean
-# │   └── data_clean.csv
-# ├── data_raw
-# │   ├── INH_ConHum.csv
-# │   └── INH_Fact_Infl.csv
-# ├── figures
-# ├── LICENSE
-# ├── paper.Rmd
-# └── README.md
+Veas-Ayala, N, Marcela Alfaro-Córdoba2, Quesada-Román, A. Costa Rican Wetlands Vulnerability Index. To be submitted in Global Ecology and Conservation.
+

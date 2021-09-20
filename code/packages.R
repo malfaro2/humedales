@@ -1,2 +1,5 @@
 library(readr)
 library(tidyverse)
+library(readxl)
+library(knitr)
+library(equatiomatic)

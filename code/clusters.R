@@ -5,8 +5,9 @@
 # Prepare Data
 load("data_clean/data_clean.Rdata")
 source("code/packages.R")
+set.seed(1818)
 summary(ConHum)
-mydata <- na.omit(ConHum[,-2]) # listwise deletion of missing
+mydata <- na.omit(ConHum[,-c(1,2,3)]) # listwise deletion of missing
 mydata <- scale(mydata) # standardize variables
 
 # Determine number of clusters
@@ -17,31 +18,37 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
      ylab="Within groups sum of squares")
 
 # K-Means Cluster Analysis
-fit <- kmeans(mydata, 5) # 5 cluster solution
+#fit <- kmeans(mydata, 5) # 7 cluster solution
 
 # get cluster means
-aggregate(mydata,by=list(fit$cluster),FUN=mean)
-
-# append cluster assignment
-mydata <- data.frame(mydata, fit$cluster)
+# aggregate(mydata,by=list(fit$cluster),FUN=mean)
 
 # Ward Hierarchical Clustering
 d <- dist(mydata, method = "euclidean") # distance matrix
-fit <- hclust(d, method="ward.D2")
-plot(fit) # display dendogram
-groups <- cutree(fit, k=5) # cut tree into 5 clusters
+fit2 <- hclust(d, method="ward.D2")
+plot(fit2) # display dendogram
+groups <- cutree(fit2, k=5) # cut tree into 4 clusters
 
-# draw dendogram with red borders around the 5 clusters
-rect.hclust(fit, k=5, border="red")
+# draw dendogram with red borders around the 4 clusters
+#rect.hclust(fit2, k=7, border="red")
 
+clustersConHum2 <- ConHum %>% 
+  select(Formulario:nom_hum) %>% 
+  mutate(groups5=groups) 
 
 clustersConHum <- ConHum %>% 
-  select(Formulario:Name) %>% 
-  mutate(groups=groups) %>% 
-  mutate(cluster2=mydata$fit.cluster)
+  mutate(groups5=groups) %>% 
+  group_by(groups5) %>% 
+  summarise(sumBE=sum(BuenEstado), sumDR=sum(Drenado),sumGP=sum(Gan_Presen), 
+            sumPI=sum(Plantas_In), sumSE=sum(Seco), sumArt=sum(Artificial),
+            sumSE=sum(Sediment), sumRE=sum(Restaur), sumPR=sum(Proc_Resta),
+            sumCO=sum(Contamin), sumCL=sum(Colmat),
+            sumCU=sum(Cultivado), sumDA=sum(damage), n=n())
+
+kable(clustersConHum)
 
 save(clustersConHum, file='data_clean/cluster_ConHum.Rdata')
-write.csv(clustersConHum, file='data_clean/cluster_ConHum.csv')
+write.csv(clustersConHum2, file='data_clean/cluster_ConHum.csv')
 
 ########################################################################
 ########################################################################s
@@ -50,8 +57,9 @@ write.csv(clustersConHum, file='data_clean/cluster_ConHum.csv')
 
 # Prepare Data
 summary(FactInf)
+set.seed(1919)
 mydata2 <- type_convert(FactInf)
-mydata2 <- na.omit(mydata2[,-c(2,10,19)]) # listwise deletion of missing
+mydata2 <- na.omit(mydata2[,-c(1,2,10,19,20,21)]) # listwise deletion of missing
 mydata2 <- scale(mydata2) # standardize variables
 
 # Determine number of clusters
@@ -62,27 +70,37 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
      ylab="Within groups sum of squares")
 
 # K-Means Cluster Analysis
-fit <- kmeans(mydata2, 4) # 5 cluster solution
+# fit <- kmeans(mydata2, 7) # 7 cluster solution
 
 # get cluster means
-aggregate(mydata2,by=list(fit$cluster),FUN=mean)
-
-# append cluster assignment
-mydata2 <- data.frame(mydata2, fit$cluster)
+# aggregate(mydata2,by=list(fit$cluster),FUN=mean)
 
 # Ward Hierarchical Clustering
 d <- dist(mydata2, method = "euclidean") # distance matrix
-fit <- hclust(d, method="ward.D2")
-plot(fit) # display dendogram
-groups <- cutree(fit, k=4) # cut tree into 4 clusters
+fit2 <- hclust(d, method="ward.D2")
+plot(fit2) # display dendogram
+groups <- cutree(fit2, k=5) # cut tree into 5 clusters
 
 # draw dendogram with red borders around the 4 clusters
-rect.hclust(fit, k=4, border="red")
+#rect.hclust(fit2, k=5, border="red")
 
-clustersFactInf <- FactInf %>% 
+clustersFactInf2 <- FactInf %>% 
   select(Formulario:nom_hum) %>% 
-  mutate(groups=groups) %>% 
-  mutate(cluster2=mydata2$fit.cluster)
+  mutate(groups5=groups) 
+
+clustersFactInf <- type_convert(FactInf) %>% 
+mutate(groups5=groups) %>% 
+  group_by(groups5) %>% 
+  summarise(sumBosq=sum(Bosques), sumCh=sum(Charr_Taco),sumSab=sum(Sabanas), 
+            sumRef=sum(Reforest),sumGI=sum(Gan_Intens), sumGE=sum(Gan_Extens),
+            sumAgr=sum(Agricult),sumAq=sum(Acuacult),
+            sumPE=sum(Pesca), sumMol=sum(Moluscos),
+            sumER=sum(Extr_Recur), sumInf=sum(Infraestr), 
+            sumTC=sum(Turism_Com), sumTA=sum(Transp_Acu), 
+            sumInd=sum(Industria), sumiV=sum(IV), 
+            n=n())
+
+kable(clustersFactInf)
 
 save(clustersFactInf, file='data_clean/cluster_FactInf.Rdata')
-write.csv(clustersFactInf, file='data_clean/cluster_FactInf.csv')
+write.csv(clustersFactInf2, file='data_clean/cluster_FactInf.csv')
